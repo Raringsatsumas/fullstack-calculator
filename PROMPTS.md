@@ -1,5 +1,16 @@
 # AI Assistance
 
+AI tools were used as a development assistant during this technical assessment.
+
+The architecture, technology choices, API contract, business rules,
+testing strategy, and final implementation decisions were defined and
+reviewed by the developer.
+
+AI assistance was used primarily for architecture review, implementation
+support, edge-case identification, test planning, documentation review,
+and final quality validation.
+
+---
 
 ## Prompt 01 - Architecture Review
 
@@ -7,7 +18,7 @@
 >
 > My proposed stack is:
 > - React + TypeScript + Vite for the frontend
-> - FastAPI + Python for the backend
+> - FastAPI + Python 3.12 for the backend
 > - REST communication between both layers
 > - Pytest for backend testing
 > - Vitest and React Testing Library for frontend testing
@@ -24,7 +35,28 @@
 
 ---
 
-## Prompt 02 - API Contract Review
+## Prompt 02 - Requirements Review
+
+> Review the following full-stack calculator architecture against the
+> technical assessment requirements.
+>
+> The solution contains:
+> - React + TypeScript frontend
+> - FastAPI backend
+> - REST communication
+> - CalculatorService business layer
+> - frontend and backend validation
+> - frontend and backend tests
+> - responsive user interface
+>
+> Verify whether the design satisfies all functional, non-functional,
+> testing, documentation, and delivery requirements.
+>
+> Identify missing requirements without adding unnecessary complexity.
+
+---
+
+## Prompt 03 - API Contract Review
 
 > I have designed the calculator API around a single resource:
 >
@@ -67,7 +99,7 @@
 
 ---
 
-## Prompt 03 - Backend Test Review
+## Prompt 04 - Backend Test Review
 
 > Before implementing the calculator service, I want to define its test
 > cases.
@@ -92,7 +124,7 @@
 
 ---
 
-## Prompt 04 - Calculator Service Implementation
+## Prompt 05 - Calculator Service Implementation
 
 > Implement the CalculatorService based on the following design.
 >
@@ -111,7 +143,7 @@
 
 ---
 
-## Prompt 05 - Pydantic Schema Implementation
+## Prompt 06 - Pydantic Schema Implementation
 
 > I need Pydantic models for the following API contract:
 >
@@ -138,24 +170,24 @@
 
 ---
 
-## Prompt 06 - FastAPI Route Implementation
+## Prompt 07 - FastAPI Route Implementation
 
 > Implement the FastAPI route for:
 >
 > POST /api/v1/calculations
 >
 > The route must:
-> - Receive the previously defined Pydantic request model.
-> - Delegate all mathematical logic to CalculatorService.
-> - Return the defined response model.
-> - Avoid embedding mathematical business logic in the controller.
-> - Map domain exceptions to the agreed API error format.
+> 1. Receive the previously defined Pydantic request model.
+> 2. Delegate all mathematical logic to CalculatorService.
+> 3. Return the defined response model.
+> 4. Avoid embedding mathematical business logic in the controller.
+> 5. Map domain exceptions to the agreed API error format.
 >
 > Keep the router thin and focused only on HTTP concerns.
 
 ---
 
-## Prompt 07 - Error Handling Review
+## Prompt 08 - Error Handling Review
 
 > I want all controlled API errors to expose a consistent response:
 >
@@ -171,7 +203,7 @@
 > - Division by zero -> 400 DIVISION_BY_ZERO
 > - Invalid mathematical domain -> 400
 > - Invalid request -> 422 VALIDATION_ERROR
-> - Unsupported operation -> 422 INVALID_OPERATION
+> - Unsupported operation -> 422
 > - Unexpected exception -> 500 INTERNAL_SERVER_ERROR
 >
 > Review this error-handling strategy and suggest the simplest FastAPI
@@ -180,7 +212,7 @@
 
 ---
 
-## Prompt 08 - Backend Code Review
+## Prompt 09 - Backend Code Review
 
 > Review the following FastAPI backend as if it were submitted for a
 > technical assessment.
@@ -196,9 +228,11 @@
 > Do not suggest new frameworks or architectural patterns unless they
 > solve a concrete problem in the existing implementation.
 >
+> [paste relevant code]
+
 ---
 
-## Prompt 09 - Frontend State Design Review
+## Prompt 10 - Frontend State Design Review
 
 > I am implementing the React calculator without Redux or an external
 > state-management library.
@@ -220,7 +254,7 @@
 
 ---
 
-## Prompt 10 - React API Client
+## Prompt 11 - React API Client
 
 > Implement a small TypeScript API client for the calculator.
 >
@@ -236,7 +270,7 @@
 
 ---
 
-## Prompt 11 - Frontend Test Review
+## Prompt 12 - Frontend Test Review
 
 > I plan to test the React calculator with Vitest and React Testing
 > Library.
@@ -255,25 +289,144 @@
 
 ---
 
-## Prompt 12 - Final Assessment Review
+## Prompt 13 - API Client Test Review
 
-> Review this project against the technical assessment requirements.
+> I want to test the frontend API service independently from React.
 >
-> Check:
+> The calculator API client should be tested for:
+> - POST request method
+> - Content-Type header
+> - correct endpoint
+> - serialized request body
+> - successful JSON response
+> - backend error response
+> - network failure
+>
+> Review this test plan and identify whether any important behavior is
+> missing.
+
+---
+
+## Prompt 14 - README Documentation Review
+
+> I have completed the implementation of a full-stack calculator using
+> React, TypeScript, FastAPI, Pytest, Vitest, and React Testing Library.
+>
+> Create or review a README for the repository with the following goals:
+>
+> - A reviewer should be able to clone and run the project without
+>   additional guidance.
+> - Document backend and frontend setup separately.
+> - Include Python 3.12 environment setup.
+> - Include npm installation and frontend startup steps.
+> - Document VITE_API_URL using .env.example.
+> - Include API request and response examples.
+> - Include error-response examples.
+> - Explain how to run backend and frontend tests.
+> - Explain how to run the production frontend build.
+> - Document the architecture and important design decisions.
+> - Explain why no database or external state-management library was used.
+> - Mention AI assistance and reference PROMPTS.md.
+>
+> Keep the documentation concise, reproducible, and aligned with the
+> actual repository structure. Do not document files, scripts, or
+> features that do not exist in the repository.
+
+---
+
+## Prompt 15 - Repository Structure Review
+
+> Review the current Git repository structure for a full-stack technical
+> assessment.
+>
+> Check for:
+> - accidentally committed virtual environments
+> - node_modules
+> - build artifacts
+> - temporary files
+> - unnecessary root-level package files
+> - missing .env.example
+> - duplicate README files
+> - generated framework files that are no longer required
+>
+> Recommend only cleanup changes that improve the clarity or
+> reproducibility of the repository.
+
+---
+
+## Prompt 16 - Final Requirements Audit
+
+> Perform a final audit of the completed project against the technical
+> assessment requirements.
+>
+> Verify:
 > - React frontend
-> - backend REST microservice
-> - required arithmetic operations
-> - frontend validation and error handling
-> - backend validation and edge cases
-> - JSON responses
+> - backend REST API
+> - addition
+> - subtraction
+> - multiplication
+> - division
+> - frontend input validation
+> - frontend error handling
 > - responsive design
-> - frontend and backend tests
+> - backend validation
+> - division-by-zero handling
+> - JSON responses
+> - clean separation of responsibilities
+> - backend unit tests
+> - backend API tests
+> - frontend tests
 > - setup documentation
 > - API examples
 > - design rationale
+> - documented AI usage
 >
-> Identify missing requirements, inconsistencies, or unnecessary
-> complexity.
+> Identify only missing requirements, regressions, or inconsistencies.
+> Do not suggest additional features unless they directly improve
+> compliance with the assessment.
+
+---
+
+## Prompt 17 - Final Code Quality Review
+
+> Review the completed project as if you were a technical evaluator.
 >
-> Do not propose additional features unless a requirement is currently
-> unmet.
+> Focus on:
+> - correctness
+> - readability
+> - maintainability
+> - naming consistency
+> - unnecessary duplication
+> - separation between UI, HTTP and business logic
+> - test quality
+> - documentation consistency
+>
+> Flag concrete issues only.
+>
+> Do not recommend architectural expansion, additional infrastructure,
+> or new dependencies unless a current implementation problem requires it.
+
+---
+
+## Prompt 18 - Optional Feature Extension Review
+
+> The required calculator functionality is already complete and tested.
+>
+> I am considering adding the optional operations:
+> - exponentiation
+> - square root
+> - percentage
+>
+> Review how these operations can be added while preserving the existing
+> architecture:
+>
+> Operation enum
+> -> CalculatorService
+> -> backend tests
+> -> API contract
+> -> frontend types
+> -> UI
+> -> frontend tests
+>
+> Avoid introducing special-case architecture or unnecessary
+> abstractions.
