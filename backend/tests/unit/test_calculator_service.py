@@ -1,6 +1,6 @@
 import pytest
 
-from app.core.exceptions import DivisionByZeroError, MissingOperandError
+from app.core.exceptions import DivisionByZeroError, MissingOperandError, NegativeSquareRootError
 from app.schemas.calculation import Operation
 from app.services.calculator_service import CalculatorService
 
@@ -54,3 +54,64 @@ def test_division_by_zero(calculator):
 def test_missing_second_operand(calculator):
     with pytest.raises(MissingOperandError):
         calculator.calculate(Operation.ADD, 10)
+
+def test_power(calculator):
+    result = calculator.calculate(
+        Operation.POWER,
+        2,
+        8,
+    )
+
+    assert result == 256
+
+
+def test_square_root(calculator):
+    result = calculator.calculate(
+        Operation.SQRT,
+        25,
+    )
+
+    assert result == 5
+
+
+def test_square_root_of_zero(calculator):
+    result = calculator.calculate(
+        Operation.SQRT,
+        0,
+    )
+
+    assert result == 0
+
+
+def test_negative_square_root(calculator):
+    with pytest.raises(NegativeSquareRootError):
+        calculator.calculate(
+            Operation.SQRT,
+            -4,
+        )
+
+
+def test_percentage(calculator):
+    result = calculator.calculate(
+        Operation.PERCENTAGE,
+        20,
+        150,
+    )
+
+    assert result == 30
+
+
+def test_power_requires_second_operand(calculator):
+    with pytest.raises(MissingOperandError):
+        calculator.calculate(
+            Operation.POWER,
+            2,
+        )
+
+
+def test_percentage_requires_second_operand(calculator):
+    with pytest.raises(MissingOperandError):
+        calculator.calculate(
+            Operation.PERCENTAGE,
+            20,
+        )

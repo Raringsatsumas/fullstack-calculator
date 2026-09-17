@@ -2,12 +2,15 @@ export type Operation =
     | "add"
     | "subtract"
     | "multiply"
-    | "divide";
+    | "divide"
+    | "power"
+    | "sqrt"
+    | "percentage";
 
 export interface CalculationRequest {
     operation: Operation;
     a: number;
-    b: number;
+    b?: number;
 }
 
 export interface CalculationResponse {

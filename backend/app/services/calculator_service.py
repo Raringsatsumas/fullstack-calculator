@@ -1,9 +1,14 @@
-from app.core.exceptions import DivisionByZeroError, MissingOperandError
+import math
+
+from app.core.exceptions import (
+    DivisionByZeroError,
+    MissingOperandError,
+    NegativeSquareRootError,
+)
 from app.schemas.calculation import Operation
 
 
 class CalculatorService:
-
     def calculate(
         self,
         operation: Operation,
@@ -11,8 +16,20 @@ class CalculatorService:
         b: float | None = None,
     ) -> float:
 
+        # Unary operations
+        if operation == Operation.SQRT:
+            if a < 0:
+                raise NegativeSquareRootError(
+                    "Square root of a negative number is not supported."
+                )
+
+            return math.sqrt(a)
+
+        # Binary operations require a second operand
         if b is None:
-            raise MissingOperandError("Operand 'b' is required.")
+            raise MissingOperandError(
+                "Operand 'b' is required."
+            )
 
         if operation == Operation.ADD:
             return a + b
@@ -31,4 +48,12 @@ class CalculatorService:
 
             return a / b
 
-        raise ValueError(f"Unsupported operation: {operation}")
+        if operation == Operation.POWER:
+            return a ** b
+
+        if operation == Operation.PERCENTAGE:
+            return (a / 100) * b
+
+        raise ValueError(
+            f"Unsupported operation: {operation}"
+        )

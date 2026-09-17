@@ -143,4 +143,83 @@ def test_invalid_operation_returns_422():
         },
     )
 
-    assert response.status_code == 422
+def test_power_returns_200():
+    response = client.post(
+        "/api/v1/calculations",
+        json={
+            "operation": "power",
+            "a": 2,
+            "b": 8,
+        },
+    )
+
+    assert response.status_code == 200
+
+    assert response.json() == {
+        "operation": "power",
+        "result": 256.0,
+    }
+
+
+def test_square_root_returns_200():
+    response = client.post(
+        "/api/v1/calculations",
+        json={
+            "operation": "sqrt",
+            "a": 25,
+        },
+    )
+
+    assert response.status_code == 200
+
+    assert response.json() == {
+        "operation": "sqrt",
+        "result": 5.0,
+    }
+
+
+def test_negative_square_root_returns_400():
+    response = client.post(
+        "/api/v1/calculations",
+        json={
+            "operation": "sqrt",
+            "a": -4,
+        },
+    )
+
+    assert response.status_code == 400
+
+    assert response.json() == {
+        "error": {
+            "code": "NEGATIVE_SQUARE_ROOT",
+            "message": (
+                "Square root of a negative number "
+                "is not supported."
+            ),
+        }
+    }
+
+
+def test_percentage_returns_200():
+    response = client.post(
+        "/api/v1/calculations",
+        json={
+            "operation": "percentage",
+            "a": 20,
+            "b": 150,
+        },
+    )
+
+    assert response.status_code == 200
+
+    assert response.json() == {
+        "operation": "percentage",
+        "result": 30.0,
+    }
+
+    assert response.status_code == 200
+
+    assert response.json() == {
+        "operation": "percentage",
+        "result": 30.0,
+    }

@@ -8,6 +8,9 @@ class Operation(str, Enum):
     SUBTRACT = "subtract"
     MULTIPLY = "multiply"
     DIVIDE = "divide"
+    POWER = "power"
+    SQRT = "sqrt"
+    PERCENTAGE = "percentage"
 
 
 class CalculationRequest(BaseModel):

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Calculator } from "../Calculator";
@@ -18,6 +18,160 @@ describe("Calculator", () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
+
+    it("allows entering negative numbers directly", async () => {
+        const user = userEvent.setup();
+
+        const { container } = render(<Calculator />);
+
+        await user.click(
+            screen.getByRole("button", { name: "−" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "2" }),
+        );
+
+        const display = container.querySelector(
+            ".calculator-display",
+        );
+
+        expect(display).toHaveTextContent("-2");
+    });
+
+    it("calculates percentage using the API", async () => {
+        const user = userEvent.setup();
+
+        mockedCalculate.mockResolvedValue({
+            operation: "percentage",
+            result: 30,
+        });
+
+        const { container } = render(<Calculator />);
+
+        await user.click(
+            screen.getByRole("button", { name: "2" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "0" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", {
+                name: "Percentage",
+            }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "1" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "5" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "0" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "=" }),
+        );
+
+        await waitFor(() => {
+            expect(mockedCalculate).toHaveBeenCalledWith({
+                operation: "percentage",
+                a: 20,
+                b: 150,
+            });
+        });
+
+        const display = container.querySelector(
+            ".calculator-display",
+        );
+
+        expect(display).toHaveTextContent("30");
+    });
+
+    it("calculates exponentiation using the API", async () => {
+        const user = userEvent.setup();
+
+        mockedCalculate.mockResolvedValue({
+            operation: "power",
+            result: 256,
+        });
+
+        const { container } = render(<Calculator />);
+
+        await user.click(
+            screen.getByRole("button", { name: "2" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "Power" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "8" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "=" }),
+        );
+
+        await waitFor(() => {
+            expect(mockedCalculate).toHaveBeenCalledWith({
+                operation: "power",
+                a: 2,
+                b: 8,
+            });
+        });
+
+        const display = container.querySelector(
+            ".calculator-display",
+        );
+
+        expect(display).toHaveTextContent("256");
+    });
+    it("calculates square root using the API", async () => {
+        const user = userEvent.setup();
+
+        mockedCalculate.mockResolvedValue({
+            operation: "sqrt",
+            result: 5,
+        });
+
+        const { container } = render(<Calculator />);
+
+        await user.click(
+            screen.getByRole("button", { name: "2" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "5" }),
+        );
+
+        await user.click(
+            screen.getByRole("button", {
+                name: "Square root",
+            }),
+        );
+
+        await waitFor(() => {
+            expect(mockedCalculate).toHaveBeenCalledWith({
+                operation: "sqrt",
+                a: 25,
+            });
+        });
+
+        const display = container.querySelector(
+            ".calculator-display",
+        );
+
+        expect(display).toHaveTextContent("5");
+    });
+
 
 
     it("renders the calculator controls", () => {

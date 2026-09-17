@@ -6,11 +6,12 @@ from app.api.calculations import router as calculations_router
 from app.core.exception_handlers import (
     division_by_zero_handler,
     missing_operand_handler,
+    negative_square_root_handler,
     validation_exception_handler,
 )
 from app.core.exceptions import (
     DivisionByZeroError,
-    MissingOperandError,
+    MissingOperandError, NegativeSquareRootError,
 )
 
 
@@ -43,6 +44,11 @@ app.add_exception_handler(
 app.add_exception_handler(
     RequestValidationError,
     validation_exception_handler,
+)
+
+app.add_exception_handler(
+    NegativeSquareRootError,
+    negative_square_root_handler,
 )
 
 

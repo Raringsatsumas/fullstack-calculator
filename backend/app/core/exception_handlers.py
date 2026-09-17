@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 
 from app.core.exceptions import (
     DivisionByZeroError,
-    MissingOperandError,
+    MissingOperandError, NegativeSquareRootError,
 )
 
 
@@ -51,3 +51,17 @@ async def validation_exception_handler(
             }
         },
     )
+
+async def negative_square_root_handler(
+    request: Request,
+    exc: NegativeSquareRootError,
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=400,
+        content={
+            "error": {
+                "code": "NEGATIVE_SQUARE_ROOT",
+                "message": str(exc),
+            }
+        },
+    )    

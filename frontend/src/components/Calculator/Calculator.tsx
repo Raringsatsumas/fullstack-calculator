@@ -8,19 +8,16 @@ import "./Calculator.css";
 
 export function Calculator() {
     const [display, setDisplay] = useState("0");
-    const [firstOperand, setFirstOperand] =
-        useState<number | null>(null);
-    const [operation, setOperation] =
-        useState<Operation | null>(null);
-    const [waitingForOperand, setWaitingForOperand] =
-        useState(false);
-    const [error, setError] =
-        useState<string | null>(null);
-    const [loading, setLoading] =
-        useState(false);
+    const [firstOperand, setFirstOperand] = useState<number | null>(null);
+    const [operation, setOperation] = useState<Operation | null>(null);
+    const [waitingForOperand, setWaitingForOperand] = useState(false);
 
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
-    function inputDigit(digit: string) {
+    const inputDigit = (digit: string) => {
+        if (loading) return;
+
         setError(null);
 
         if (waitingForOperand) {
@@ -29,15 +26,25 @@ export function Calculator() {
             return;
         }
 
-        setDisplay(
-            display === "0"
-                ? digit
-                : display + digit
-        );
-    }
+        setDisplay((currentDisplay) => {
+            if (currentDisplay === "0") {
+                return digit;
+            }
+
+            if (currentDisplay === "-") {
+                return `-${digit}`;
+            }
+
+            return currentDisplay + digit;
+        });
+    };
 
 
-    function inputDecimal() {
+    const inputDecimal = () => {
+        if (loading) return;
+
+        setError(null);
+
         if (waitingForOperand) {
             setDisplay("0.");
             setWaitingForOperand(false);
@@ -45,28 +52,62 @@ export function Calculator() {
         }
 
         if (!display.includes(".")) {
-            setDisplay(display + ".");
+            setDisplay((currentDisplay) => currentDisplay + ".");
         }
-    }
+    };
 
 
-    function selectOperation(
-        selectedOperation: Operation
-    ) {
-        setFirstOperand(Number(display));
+    const selectOperation = (selectedOperation: Operation) => {
+        if (loading) return;
+
+        setError(null);
+
+        const currentValue = Number(display);
+
+        /*
+         * If no first operand has been selected yet,
+         * the current display becomes the first operand.
+         */
+        if (firstOperand === null) {
+            setFirstOperand(currentValue);
+        }
+
+        /*
+         * If the user already selected an operation but has not
+         * entered the second operand yet, simply replace the
+         * selected operation.
+         */
         setOperation(selectedOperation);
         setWaitingForOperand(true);
+    };
+
+    const handleSubtract = () => {
+        if (loading) return;
+
         setError(null);
-    }
+
+        // If we are starting a new number, use minus as a negative sign.
+        if (firstOperand === null && display === "0") {
+            setDisplay("-");
+            setWaitingForOperand(false);
+            return;
+        }
+
+        // Otherwise, use minus as the subtraction operation.
+        selectOperation("subtract");
+    };
 
 
-    async function performCalculation() {
+    const performCalculation = async () => {
         if (
+            loading ||
             firstOperand === null ||
             operation === null
         ) {
             return;
         }
+
+        const secondOperand = Number(display);
 
         try {
             setLoading(true);
@@ -75,10 +116,15 @@ export function Calculator() {
             const response = await calculate({
                 operation,
                 a: firstOperand,
-                b: Number(display),
+                b: secondOperand,
             });
 
             setDisplay(String(response.result));
+
+            /*
+             * Reset the binary operation after receiving
+             * the result from the backend.
+             */
             setFirstOperand(null);
             setOperation(null);
             setWaitingForOperand(true);
@@ -86,129 +132,265 @@ export function Calculator() {
             setError(
                 err instanceof Error
                     ? err.message
-                    : "An unexpected error occurred."
+                    : "An unexpected error occurred.",
             );
         } finally {
             setLoading(false);
         }
-    }
+    };
 
 
-    function clearCalculator() {
+    const performSquareRoot = async () => {
+        if (loading) return;
+
+        const currentValue = Number(display);
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const response = await calculate({
+                operation: "sqrt",
+                a: currentValue,
+            });
+
+            setDisplay(String(response.result));
+
+            /*
+             * Square root is unary, so there is no second operand.
+             * Clear any previous binary operation.
+             */
+            setFirstOperand(null);
+            setOperation(null);
+            setWaitingForOperand(true);
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "An unexpected error occurred.",
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const clearCalculator = () => {
         setDisplay("0");
         setFirstOperand(null);
         setOperation(null);
         setWaitingForOperand(false);
         setError(null);
-    }
+    };
 
 
     return (
         <div className="calculator">
-            <div className="calculator-display">
-                {display}
+            <div
+                className="calculator-display"
+                aria-live="polite"
+            >
+                {loading ? "..." : display}
             </div>
 
             {error && (
-                <div className="calculator-error">
+                <div
+                    className="error-message"
+                    role="alert"
+                >
                     {error}
                 </div>
             )}
 
             <div className="calculator-grid">
+                {/* Advanced operations */}
 
                 <button
-                    className="clear"
+                    className="function-button"
+                    type="button"
                     onClick={clearCalculator}
+                    disabled={loading}
                 >
                     C
                 </button>
 
                 <button
-                    onClick={() =>
-                        selectOperation("divide")
-                    }
+                    className="function-button"
+                    type="button"
+                    onClick={performSquareRoot}
+                    disabled={loading}
+                    aria-label="Square root"
+                >
+                    √
+                </button>
+
+                <button
+                    className="function-button"
+                    type="button"
+                    onClick={() => selectOperation("percentage")}
+                    disabled={loading}
+                    aria-label="Percentage"
+                >
+                    %
+                </button>
+
+                <button
+                    className="operator-button"
+                    type="button"
+                    onClick={() => selectOperation("power")}
+                    disabled={loading}
+                    aria-label="Power"
+                >
+                    xʸ
+                </button>
+
+                {/* Row 2 */}
+
+                <button
+                    type="button"
+                    onClick={() => inputDigit("7")}
+                    disabled={loading}
+                >
+                    7
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => inputDigit("8")}
+                    disabled={loading}
+                >
+                    8
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => inputDigit("9")}
+                    disabled={loading}
+                >
+                    9
+                </button>
+
+                <button
+                    className="operator-button"
+                    type="button"
+                    onClick={() => selectOperation("divide")}
+                    disabled={loading}
                 >
                     ÷
                 </button>
 
-                {[7, 8, 9].map((number) => (
-                    <button
-                        key={number}
-                        onClick={() =>
-                            inputDigit(String(number))
-                        }
-                    >
-                        {number}
-                    </button>
-                ))}
+                {/* Row 3 */}
 
                 <button
-                    onClick={() =>
-                        selectOperation("multiply")
-                    }
+                    type="button"
+                    onClick={() => inputDigit("4")}
+                    disabled={loading}
+                >
+                    4
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => inputDigit("5")}
+                    disabled={loading}
+                >
+                    5
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => inputDigit("6")}
+                    disabled={loading}
+                >
+                    6
+                </button>
+
+                <button
+                    className="operator-button"
+                    type="button"
+                    onClick={() => selectOperation("multiply")}
+                    disabled={loading}
                 >
                     ×
                 </button>
 
-                {[4, 5, 6].map((number) => (
-                    <button
-                        key={number}
-                        onClick={() =>
-                            inputDigit(String(number))
-                        }
-                    >
-                        {number}
-                    </button>
-                ))}
+                {/* Row 4 */}
 
                 <button
-                    onClick={() =>
-                        selectOperation("subtract")
-                    }
+                    type="button"
+                    onClick={() => inputDigit("1")}
+                    disabled={loading}
+                >
+                    1
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => inputDigit("2")}
+                    disabled={loading}
+                >
+                    2
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => inputDigit("3")}
+                    disabled={loading}
+                >
+                    3
+                </button>
+
+                <button
+                    className="operator-button"
+                    type="button"
+                    onClick={handleSubtract}
+                    disabled={loading}
                 >
                     −
                 </button>
 
-                {[1, 2, 3].map((number) => (
-                    <button
-                        key={number}
-                        onClick={() =>
-                            inputDigit(String(number))
-                        }
-                    >
-                        {number}
-                    </button>
-                ))}
+                {/* Row 5 */}
 
                 <button
-                    onClick={() =>
-                        selectOperation("add")
-                    }
-                >
-                    +
-                </button>
-
-                <button
-                    className="zero"
+                    type="button"
                     onClick={() => inputDigit("0")}
+                    disabled={loading}
                 >
                     0
                 </button>
 
-                <button onClick={inputDecimal}>
+                <button
+                    type="button"
+                    onClick={inputDecimal}
+                    disabled={loading}
+                >
                     .
                 </button>
 
                 <button
-                    className="equals"
+                    className="equals-button"
+                    type="button"
                     onClick={performCalculation}
-                    disabled={loading}
+                    disabled={
+                        loading ||
+                        firstOperand === null ||
+                        operation === null
+                    }
                 >
-                    {loading ? "..." : "="}
+                    =
                 </button>
 
+                <button
+                    className="operator-button"
+                    type="button"
+                    onClick={() => selectOperation("add")}
+                    disabled={loading}
+                >
+                    +
+                </button>
             </div>
         </div>
     );
 }
+
+export default Calculator;

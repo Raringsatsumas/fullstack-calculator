@@ -8,3 +8,7 @@ class DivisionByZeroError(CalculatorError):
 
 class MissingOperandError(CalculatorError):
     """Raised when a required operand is missing."""
+
+
+class NegativeSquareRootError(CalculatorError):
+    """Raised when calculating the square root of a negative number."""
