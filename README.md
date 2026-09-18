@@ -1,189 +1,195 @@
 # Full-Stack Calculator
 
-A full-stack calculator application built with **React, TypeScript, and FastAPI**.
+A full-stack calculator application built as a technical assessment using **React + TypeScript** for the frontend and **FastAPI + Python** for the backend.
 
-The application allows users to perform basic arithmetic operations through a responsive React interface. Mathematical operations are processed by a backend REST API, keeping the presentation layer separated from the business logic.
+The frontend communicates with the backend exclusively through a REST API. Mathematical operations are handled by the backend rather than being calculated directly in the React application.
 
-The solution was intentionally designed to remain simple, maintainable, testable, and aligned with the requirements of the technical assessment.
+The project focuses on correctness, maintainability, separation of responsibilities, validation, error handling, automated testing, and clear documentation.
 
 ---
 
 ## Features
 
-The calculator currently supports:
+The calculator supports the required operations:
 
 - Addition
 - Subtraction
 - Multiplication
 - Division
+
+It also includes the optional advanced operations:
+
+- Exponentiation
+- Square root
+- Percentage
+
+Additional behavior includes:
+
+- Positive and negative numbers
 - Decimal numbers
-- Negative results
+- Direct negative-number input
 - Division-by-zero validation
-- Backend input validation
-- Frontend error handling
+- Negative square-root validation
+- Backend API error handling
+- Loading state while calculations are processed
 - Responsive interface
-- REST API communication
-- Unit and integration tests
-
-Optional operations such as exponentiation, square root, and percentage can be added following the same architecture.
+- Automated frontend and backend tests
+- Test coverage reporting
 
 ---
 
-# Architecture
+## Technology Stack
 
-The application is organized as a monorepo containing two independent applications:
-
-```text
-                    User
-                      |
-                      v
-              React + TypeScript
-                      |
-                      | REST / JSON
-                      v
-                  FastAPI
-                      |
-                      v
-             CalculatorService
-```
-
-The responsibilities are separated as follows:
-
-```text
-Frontend
-|
-|-- User interface
-|-- User interaction
-|-- Basic client-side validation
-|-- Error presentation
-|-- API communication
-|
-Backend
-|
-|-- Request validation
-|-- REST API
-|-- Business rules
-|-- Mathematical operations
-|-- Domain errors
-|-- JSON responses
-```
-
-The frontend does not perform the final calculation. It sends the operands and selected operation to the backend API, which performs the calculation and returns the result.
-
----
-
-# Technology Stack
-
-## Frontend
+### Frontend
 
 - React
 - TypeScript
 - Vite
-- Fetch API
 - Vitest
 - React Testing Library
-- Testing Library User Event
+- JSDOM
 - OxLint
 
-## Backend
+### Backend
 
 - Python 3.12
 - FastAPI
 - Pydantic
-- Uvicorn
 - Pytest
-- HTTPX
+
+### Communication
+
+- REST API
+- JSON request and response payloads
 
 ---
 
-# Project Structure
+## Architecture
+
+The application uses a simple client-server architecture:
+
+```text
+┌─────────────────────┐
+│                     │
+│   React Frontend    │
+│                     │
+│  UI + State         │
+│  API Client         │
+│                     │
+└──────────┬──────────┘
+           │
+           │ HTTP / JSON
+           │
+           ▼
+┌─────────────────────┐
+│                     │
+│   FastAPI Backend   │
+│                     │
+│  Router             │
+│  Validation         │
+│  CalculatorService  │
+│  Exception Handling │
+│                     │
+└─────────────────────┘
+```
+
+The frontend does not perform the final mathematical calculation.
+
+When the user performs an operation, the React application sends the operands and operation to the backend API. The backend validates the request, executes the business logic, and returns the result as JSON.
+
+---
+
+## Project Structure
 
 ```text
 fullstack-calculator/
-|
-|-- backend/
-|   |
-|   |-- app/
-|   |   |
-|   |   |-- api/
-|   |   |   `-- calculations.py
-|   |   |
-|   |   |-- core/
-|   |   |   |-- exceptions.py
-|   |   |   `-- exception_handlers.py
-|   |   |
-|   |   |-- schemas/
-|   |   |   |-- calculation.py
-|   |   |   `-- error.py
-|   |   |
-|   |   |-- services/
-|   |   |   `-- calculator_service.py
-|   |   |
-|   |   `-- main.py
-|   |
-|   |-- tests/
-|   |   |
-|   |   |-- integration/
-|   |   |   |-- test_health.py
-|   |   |   `-- test_calculations_api.py
-|   |   |
-|   |   `-- unit/
-|   |       `-- test_calculator_service.py
-|   |
-|   `-- requirements.txt
-|
-|-- frontend/
-|   |
-|   |-- src/
-|   |   |
-|   |   |-- components/
-|   |   |   `-- Calculator/
-|   |   |       |-- Calculator.tsx
-|   |   |       |-- Calculator.css
-|   |   |       |
-|   |   |       `-- __tests__/
-|   |   |           `-- Calculator.test.tsx
-|   |   |
-|   |   |-- services/
-|   |   |   |-- calculatorApi.ts
-|   |   |   |
-|   |   |   `-- __tests__/
-|   |   |       `-- calculatorApi.test.ts
-|   |   |
-|   |   |-- test/
-|   |   |   `-- setup.ts
-|   |   |
-|   |   |-- types/
-|   |   |   `-- calculator.ts
-|   |   |
-|   |   |-- App.tsx
-|   |   |-- App.css
-|   |   |-- index.css
-|   |   `-- main.tsx
-|   |
-|   |-- .env.example
-|   |-- package.json
-|   `-- vite.config.ts
-|
-|-- .gitignore
-|-- PROMPTS.md
-`-- README.md
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── calculations.py
+│   │   │
+│   │   ├── core/
+│   │   │   ├── exception_handlers.py
+│   │   │   └── exceptions.py
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── calculation.py
+│   │   │   └── error.py
+│   │   │
+│   │   ├── services/
+│   │   │   └── calculator_service.py
+│   │   │
+│   │   └── main.py
+│   │
+│   ├── tests/
+│   │   ├── integration/
+│   │   │   ├── test_calculations_api.py
+│   │   │   └── test_health.py
+│   │   │
+│   │   └── unit/
+│   │       └── test_calculator_service.py
+│   │
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   │
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── Calculator/
+│   │   │       ├── __tests__/
+│   │   │       │   └── Calculator.test.tsx
+│   │   │       ├── Calculator.css
+│   │   │       └── Calculator.tsx
+│   │   │
+│   │   ├── services/
+│   │   │   ├── __tests__/
+│   │   │   │   └── calculatorApi.test.ts
+│   │   │   └── calculatorApi.ts
+│   │   │
+│   │   ├── test/
+│   │   │   └── setup.ts
+│   │   │
+│   │   ├── types/
+│   │   │   └── calculator.ts
+│   │   │
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   ├── index.css
+│   │   └── main.tsx
+│   │
+│   ├── .env.example
+│   ├── .oxlintrc.json
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+│
+├── .gitignore
+├── PROMPTS.md
+└── README.md
 ```
 
 ---
 
-# Requirements
+# Getting Started
 
-Before running the application, make sure the following tools are installed:
+## Prerequisites
 
-```text
-Python 3.12+
-Node.js
-npm
-Git
-```
+Make sure the following tools are installed:
 
-You can verify your installed versions with:
+- Python 3.12+
+- Node.js
+- npm
+- Git
+
+Verify the installations with:
 
 ```bash
 python --version
@@ -192,15 +198,9 @@ npm --version
 git --version
 ```
 
-The backend was developed using **Python 3.12**.
-
 ---
 
-# Getting Started
-
-## 1. Clone the repository
-
-Clone the repository and navigate into the project directory:
+# 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
@@ -211,9 +211,15 @@ Replace `<repository-url>` with the URL of this repository.
 
 ---
 
-# Backend Setup
+# 2. Backend Setup
 
-## 2. Create the Python virtual environment
+The backend is located in:
+
+```text
+backend/
+```
+
+## Create a Python virtual environment
 
 From the project root:
 
@@ -221,73 +227,45 @@ From the project root:
 python -m venv .venv
 ```
 
-If multiple Python versions are installed on Windows, Python 3.12 can be explicitly selected with:
-
-```powershell
-py -3.12 -m venv .venv
-```
-
----
-
-## 3. Activate the virtual environment
-
 ### Windows PowerShell
+
+Activate it using:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-After activation, the terminal should display something similar to:
+### macOS / Linux
 
-```text
-(.venv) PS ...\fullstack-calculator>
-```
-
-Verify the Python version:
-
-```powershell
-python --version
-```
-
-Expected:
-
-```text
-Python 3.12.x
+```bash
+source .venv/bin/activate
 ```
 
 ---
 
-## 4. Install backend dependencies
+## Install Backend Dependencies
 
 From the project root:
-
-```powershell
-python -m pip install -r backend\requirements.txt
-```
-
-Alternatively:
 
 ```bash
 pip install -r backend/requirements.txt
 ```
 
----
+Then enter the backend directory:
 
-## 5. Start the backend
-
-Navigate to the backend directory:
-
-```powershell
+```bash
 cd backend
 ```
 
-Start FastAPI with Uvicorn:
+---
 
-```powershell
+## Start the Backend
+
+```bash
 python -m uvicorn app.main:app --reload
 ```
 
-The API will be available at:
+The backend will be available at:
 
 ```text
 http://localhost:8000
@@ -295,7 +273,7 @@ http://localhost:8000
 
 ---
 
-## 6. Verify the backend
+## Health Check
 
 Open:
 
@@ -303,111 +281,104 @@ Open:
 http://localhost:8000/health
 ```
 
-Expected response:
-
-```json
-{
-  "status": "ok"
-}
-```
+The endpoint can be used to verify that the API is running.
 
 ---
 
-## 7. Open the API documentation
+## Interactive API Documentation
 
-FastAPI automatically generates interactive OpenAPI documentation.
-
-Swagger UI:
+FastAPI automatically provides Swagger documentation at:
 
 ```text
 http://localhost:8000/docs
 ```
 
-From this page, the calculator API can be tested without running the React frontend.
+The calculator API can be tested directly from this interface.
 
 ---
 
-# Frontend Setup
+# 3. Frontend Setup
 
-Keep the backend running and open a second terminal.
+Open a second terminal and enter the frontend directory:
 
-## 8. Navigate to the frontend
-
-From the project root:
-
-```powershell
+```bash
 cd frontend
 ```
 
----
+Install dependencies:
 
-## 9. Install frontend dependencies
-
-```powershell
+```bash
 npm install
+```
+
+For a reproducible installation using the existing lock file, you can also use:
+
+```bash
+npm ci
 ```
 
 ---
 
-## 10. Configure the frontend environment
+## Environment Configuration
 
-The frontend uses an environment variable to determine the backend URL.
+The frontend uses an environment variable to define the backend API URL.
 
-An example file is provided:
+An example file is included:
 
 ```text
 frontend/.env.example
 ```
 
-Create:
+Create a local `.env` file from it.
 
-```text
-frontend/.env
+### Windows PowerShell
+
+```powershell
+Copy-Item .env.example .env
 ```
 
-with:
+### macOS / Linux
+
+```bash
+cp .env.example .env
+```
+
+The configuration should contain:
 
 ```env
 VITE_API_URL=http://localhost:8000
 ```
 
-The `.env` file is intentionally excluded from Git.
-
-The `.env.example` file is included in the repository as documentation of the required environment variables.
+The `.env` file is intentionally excluded from version control.
 
 ---
 
-## 11. Start the frontend
+## Start the Frontend
 
-Run:
-
-```powershell
+```bash
 npm run dev
 ```
 
-Vite will display an address similar to:
+Vite will display the local application URL, normally:
 
 ```text
 http://localhost:5173
 ```
 
-Open it in the browser.
+The frontend requires the FastAPI backend to be running for calculations to work.
 
 ---
 
 # Running the Complete Application
 
-Two processes must be running simultaneously.
+Use two terminals.
 
 ## Terminal 1 — Backend
 
-```powershell
-cd fullstack-calculator
+From the project root:
 
-.\.venv\Scripts\Activate.ps1
-
+```bash
 cd backend
-
 python -m uvicorn app.main:app --reload
 ```
 
@@ -419,9 +390,8 @@ http://localhost:8000
 
 ## Terminal 2 — Frontend
 
-```powershell
-cd fullstack-calculator\frontend
-
+```bash
+cd frontend
 npm run dev
 ```
 
@@ -431,66 +401,23 @@ Frontend:
 http://localhost:5173
 ```
 
-The communication flow is:
-
-```text
-Browser
-   |
-   v
-React
-   |
-   | POST /api/v1/calculations
-   v
-FastAPI
-   |
-   v
-CalculatorService
-   |
-   v
-JSON response
-   |
-   v
-React display
-```
-
 ---
 
-# API Documentation
+# API
 
 ## Calculate
-
-Performs a mathematical operation.
-
-### Endpoint
 
 ```http
 POST /api/v1/calculations
 ```
 
-### Content Type
-
-```http
-Content-Type: application/json
-```
+The same endpoint is used for every supported mathematical operation.
 
 ---
 
-# Supported Operations
+## Request Format
 
-The currently supported operation values are:
-
-```text
-add
-subtract
-multiply
-divide
-```
-
----
-
-# Addition Example
-
-## Request
+Binary operations use:
 
 ```json
 {
@@ -500,15 +427,20 @@ divide
 }
 ```
 
-## Response
+Unary operations such as square root only require operand `a`:
 
-HTTP:
-
-```text
-200 OK
+```json
+{
+  "operation": "sqrt",
+  "a": 25
+}
 ```
 
-Body:
+---
+
+## Response Format
+
+A successful request returns:
 
 ```json
 {
@@ -519,9 +451,46 @@ Body:
 
 ---
 
-# Subtraction Example
+# Supported Operations
 
-## Request
+| Operation | API value | Example | Result |
+|---|---|---|---:|
+| Addition | `add` | 10 + 5 | 15 |
+| Subtraction | `subtract` | 10 - 5 | 5 |
+| Multiplication | `multiply` | 10 × 5 | 50 |
+| Division | `divide` | 10 ÷ 5 | 2 |
+| Exponentiation | `power` | 2⁸ | 256 |
+| Square root | `sqrt` | √25 | 5 |
+| Percentage | `percentage` | 20% of 150 | 30 |
+
+---
+
+# API Examples
+
+## Addition
+
+Request:
+
+```json
+{
+  "operation": "add",
+  "a": 10,
+  "b": 5
+}
+```
+
+Response:
+
+```json
+{
+  "operation": "add",
+  "result": 15
+}
+```
+
+---
+
+## Subtraction
 
 ```json
 {
@@ -531,7 +500,7 @@ Body:
 }
 ```
 
-## Response
+Response:
 
 ```json
 {
@@ -542,19 +511,17 @@ Body:
 
 ---
 
-# Multiplication Example
-
-## Request
+## Multiplication
 
 ```json
 {
   "operation": "multiply",
-  "a": 4,
-  "b": 5
+  "a": 5,
+  "b": 4
 }
 ```
 
-## Response
+Response:
 
 ```json
 {
@@ -565,9 +532,7 @@ Body:
 
 ---
 
-# Division Example
-
-## Request
+## Division
 
 ```json
 {
@@ -577,7 +542,7 @@ Body:
 }
 ```
 
-## Response
+Response:
 
 ```json
 {
@@ -588,26 +553,108 @@ Body:
 
 ---
 
+## Exponentiation
+
+```json
+{
+  "operation": "power",
+  "a": 2,
+  "b": 8
+}
+```
+
+Response:
+
+```json
+{
+  "operation": "power",
+  "result": 256
+}
+```
+
+---
+
+## Square Root
+
+Square root is a unary operation and therefore does not require operand `b`.
+
+```json
+{
+  "operation": "sqrt",
+  "a": 25
+}
+```
+
+Response:
+
+```json
+{
+  "operation": "sqrt",
+  "result": 5
+}
+```
+
+---
+
+## Percentage
+
+Percentage is interpreted as:
+
+```text
+a percent of b
+```
+
+The backend calculates it using:
+
+```text
+(a / 100) × b
+```
+
+For example:
+
+```text
+20% of 150 = 30
+```
+
+Request:
+
+```json
+{
+  "operation": "percentage",
+  "a": 20,
+  "b": 150
+}
+```
+
+Response:
+
+```json
+{
+  "operation": "percentage",
+  "result": 30
+}
+```
+
+---
+
 # Error Handling
 
-The API uses a consistent JSON error structure:
+Controlled API errors use a consistent structure:
 
 ```json
 {
   "error": {
     "code": "ERROR_CODE",
-    "message": "Human readable error message."
+    "message": "Human readable error message"
   }
 }
 ```
 
-This allows the frontend to handle backend errors consistently.
-
 ---
 
-# Division by Zero
+## Division by Zero
 
-## Request
+Request:
 
 ```json
 {
@@ -617,15 +664,7 @@ This allows the frontend to handle backend errors consistently.
 }
 ```
 
-## Response
-
-HTTP:
-
-```text
-400 Bad Request
-```
-
-Body:
+Response:
 
 ```json
 {
@@ -636,87 +675,327 @@ Body:
 }
 ```
 
+HTTP status:
+
+```text
+400 Bad Request
+```
+
 ---
 
-# Invalid Input
+## Negative Square Root
 
-Example:
+Request:
 
 ```json
 {
-  "operation": "add",
-  "a": "invalid-number",
-  "b": 5
+  "operation": "sqrt",
+  "a": -4
 }
 ```
 
 Response:
 
-```text
-422 Unprocessable Entity
-```
-
-Example body:
-
 ```json
 {
   "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "The request contains invalid or missing fields."
+    "code": "NEGATIVE_SQUARE_ROOT",
+    "message": "Square root of a negative number is not supported."
   }
 }
 ```
 
----
-
-# HTTP Status Codes
-
-| Status | Meaning |
-|---|---|
-| `200 OK` | Calculation completed successfully |
-| `400 Bad Request` | The mathematical operation is invalid, such as division by zero |
-| `422 Unprocessable Entity` | The request contains invalid or missing data |
-| `500 Internal Server Error` | An unexpected backend error occurred |
-
----
-
-# Backend Testing
-
-Backend tests are implemented using **Pytest**.
-
-The tests are divided into two categories:
+HTTP status:
 
 ```text
-Unit tests
-    |
-    `-- CalculatorService business logic
-
-Integration tests
-    |
-    `-- FastAPI endpoints, validation and JSON responses
+400 Bad Request
 ```
 
-## Run backend tests
+---
 
-Activate the virtual environment and navigate to:
+## Missing Operand
 
-```powershell
-cd backend
+Binary operations require both operands.
+
+Example:
+
+```json
+{
+  "operation": "power",
+  "a": 2
+}
 ```
 
-Run:
+The API returns a validation/domain error indicating that operand `b` is required.
 
-```powershell
+---
+
+## Invalid Request
+
+Invalid input types or unsupported operation values return:
+
+```text
+422 Unprocessable Entity
+```
+
+Validation errors are handled centrally by the backend.
+
+---
+
+# Backend Design
+
+The backend separates HTTP concerns from mathematical business logic.
+
+## API Layer
+
+```text
+backend/app/api/calculations.py
+```
+
+Responsible for receiving HTTP requests and returning responses.
+
+The router does not contain mathematical logic.
+
+---
+
+## Schema Layer
+
+```text
+backend/app/schemas/calculation.py
+```
+
+Defines request and response models using Pydantic.
+
+Operations are represented using an enum rather than unrestricted strings.
+
+---
+
+## Service Layer
+
+```text
+backend/app/services/calculator_service.py
+```
+
+Contains the calculator business logic.
+
+The service is independent from FastAPI-specific HTTP behavior, which makes it easy to test directly.
+
+---
+
+## Domain Exceptions
+
+```text
+backend/app/core/exceptions.py
+```
+
+Defines calculator-specific exceptions such as:
+
+```text
+DivisionByZeroError
+MissingOperandError
+NegativeSquareRootError
+```
+
+---
+
+## Exception Handlers
+
+```text
+backend/app/core/exception_handlers.py
+```
+
+Maps domain and validation errors to consistent HTTP responses.
+
+This keeps exception formatting outside the business-logic layer.
+
+---
+
+# Frontend Design
+
+The frontend separates rendering, calculator state, API communication, and shared types.
+
+## Calculator Component
+
+```text
+frontend/src/components/Calculator/Calculator.tsx
+```
+
+Responsible for:
+
+- Calculator state
+- Numeric input
+- Decimal input
+- Negative-number input
+- Operation selection
+- Loading state
+- Displaying backend results
+- Displaying API errors
+
+The component does not perform the final mathematical calculation.
+
+---
+
+## API Client
+
+```text
+frontend/src/services/calculatorApi.ts
+```
+
+Handles communication with:
+
+```text
+POST /api/v1/calculations
+```
+
+It is responsible for:
+
+- Sending JSON requests
+- Reading successful responses
+- Parsing backend errors
+- Handling network failures
+
+Keeping API communication separate from the React component simplifies testing and maintenance.
+
+---
+
+## Shared Types
+
+```text
+frontend/src/types/calculator.ts
+```
+
+Defines TypeScript types for:
+
+- Operations
+- API requests
+- API responses
+- API errors
+
+---
+
+# Design Decisions
+
+## Single Calculation Endpoint
+
+All operations use:
+
+```text
+POST /api/v1/calculations
+```
+
+instead of creating a separate endpoint for every mathematical operation.
+
+This keeps the API small and consistent while allowing new operations to be added through the `operation` field.
+
+---
+
+## Business Logic Outside the Router
+
+Mathematical operations are implemented in `CalculatorService`.
+
+This provides:
+
+- Better separation of responsibilities
+- Easier unit testing
+- Smaller route handlers
+- Easier extension of supported operations
+
+---
+
+## Centralized Error Handling
+
+Domain exceptions are converted into HTTP responses through FastAPI exception handlers.
+
+This avoids repeating error-response logic in individual routes.
+
+---
+
+## No Database
+
+The calculator is stateless.
+
+Each request contains all the information required to calculate a result, so introducing a database would add complexity without providing value for the requirements of this application.
+
+---
+
+## No External Frontend State Manager
+
+The calculator has a small amount of local UI state.
+
+React's built-in `useState` is sufficient, so Redux or another state-management library would add unnecessary complexity.
+
+---
+
+## Backend as the Source of Truth
+
+The React application manages user interaction but delegates the mathematical operation to the API.
+
+This preserves the requested full-stack architecture and avoids duplicating business logic between frontend and backend.
+
+---
+
+## Unary and Binary Operations
+
+Most calculator operations are binary:
+
+```text
+a + b
+a - b
+a × b
+a ÷ b
+aᵇ
+a% of b
+```
+
+Square root is unary:
+
+```text
+√a
+```
+
+For that reason, operand `b` is optional in the API request model but validated by the service when a binary operation requires it.
+
+---
+
+# Testing
+
+The project contains automated tests for both the backend and frontend.
+
+---
+
+## Backend Tests
+
+Backend tests use Pytest.
+
+From:
+
+```text
+backend/
+```
+
+run:
+
+```bash
 python -m pytest
 ```
 
 For verbose output:
 
-```powershell
+```bash
 python -m pytest -v
 ```
 
-The backend test suite covers scenarios including:
+The backend test suite includes both unit and integration tests.
+
+### Unit tests
+
+```text
+backend/tests/unit/test_calculator_service.py
+```
+
+These verify calculator business logic independently from HTTP.
+
+Covered scenarios include:
 
 - Addition
 - Subtraction
@@ -724,248 +1003,196 @@ The backend test suite covers scenarios including:
 - Division
 - Decimal operands
 - Negative operands
-- Multiplication by zero
 - Division by zero
 - Missing operands
-- Invalid input
-- HTTP responses
+- Exponentiation
+- Square root
+- Square root of zero
+- Negative square root
+- Percentage
+
+### Integration tests
+
+```text
+backend/tests/integration/
+```
+
+These verify:
+
+- API responses
+- HTTP status codes
+- Request validation
+- Error response structures
 - Health endpoint
+- Required operations
+- Advanced operations
 
 ---
 
-# Frontend Testing
+## Backend Coverage
 
-Frontend tests are implemented using:
+Backend coverage can be generated using `pytest-cov`.
+
+Install it if it is not already available:
+
+```bash
+python -m pip install pytest-cov
+```
+
+Then run from the `backend` directory:
+
+```bash
+python -m pytest --cov=app --cov-report=term-missing
+```
+
+---
+
+# Frontend Tests
+
+Frontend tests use:
+
+- Vitest
+- React Testing Library
+- JSDOM
+- User Event
+
+From:
 
 ```text
-Vitest
-React Testing Library
-Testing Library User Event
-JSDOM
+frontend/
 ```
 
-Navigate to:
+run the test suite with:
 
-```powershell
-cd frontend
-```
-
-Run the complete test suite once:
-
-```powershell
+```bash
 npm run test:run
 ```
 
-Run tests in watch mode:
+Interactive test mode:
 
-```powershell
-npm test
+```bash
+npm run test
 ```
 
-The frontend tests cover:
+The frontend tests verify behaviors such as:
 
-- Calculator rendering
-- Number input
+- Calculator controls render correctly
+- Numeric input
 - Decimal input
+- Negative-number input
 - Operation selection
-- API invocation
-- Correct operands sent to the backend
-- Backend result rendering
-- Backend error rendering
-- Calculator reset behavior
-- API POST configuration
-- API success responses
-- API error responses
+- API requests
+- Successful API responses
+- Backend error messages
+- Clear/reset behavior
+- Exponentiation
+- Square root
+- Percentage
+- API client behavior
 - Network errors
 
 ---
 
-# Production Build
+# Frontend Test Coverage
 
-To verify that the React application compiles correctly for production:
+Coverage can be generated with:
 
-```powershell
-cd frontend
+```bash
+npm run test:coverage
+```
+
+Latest frontend coverage snapshot:
+
+| Metric | Coverage |
+|---|---:|
+| Statements | 87.61% |
+| Branches | 69.56% |
+| Functions | 92.30% |
+| Lines | 91.91% |
+
+The API service reaches full statement and line coverage, while most uncovered branches are located in UI state and defensive error-handling paths.
+
+Coverage artifacts are generated locally and are not required to be committed to the repository.
+
+---
+
+# Frontend Quality Checks
+
+## Lint
+
+Run:
+
+```bash
+npm run lint
+```
+
+The frontend uses OxLint.
+
+---
+
+## Production Build
+
+Verify that the frontend can produce a production build with:
+
+```bash
 npm run build
 ```
 
-A successful build generates:
+The generated build output is placed in:
 
 ```text
 frontend/dist/
 ```
 
-The `dist` directory is intentionally excluded from version control because it can be recreated from the source code.
+The `dist` directory is intentionally excluded from version control.
 
 ---
 
-# Linting
+# Available Frontend Scripts
 
-The frontend uses OxLint.
-
-Run:
-
-```powershell
-cd frontend
-npm run lint
-```
-
-Linting helps detect common code-quality issues before submission.
-
----
-
-# Design Decisions
-
-## Monorepo
-
-The frontend and backend are stored in the same Git repository.
-
-This makes the assessment easier to clone, review, test, and execute while still maintaining a clear separation between the two applications.
+| Command | Description |
+|---|---|
+| `npm run dev` | Starts the Vite development server |
+| `npm run build` | Type-checks and creates the production build |
+| `npm run lint` | Runs OxLint |
+| `npm run preview` | Serves the production build locally |
+| `npm run test` | Runs Vitest in interactive/watch mode |
+| `npm run test:run` | Runs all frontend tests once |
+| `npm run test:coverage` | Runs tests and generates coverage |
 
 ---
 
-## React + TypeScript
+# Manual Verification
 
-React was selected for the frontend because it is explicitly required by the assessment.
-
-TypeScript provides additional type safety for application state and API contracts.
-
-For example, calculator operations are represented using explicit types instead of arbitrary strings.
-
----
-
-## FastAPI
-
-FastAPI was selected for the backend because it provides:
-
-- Request validation through Pydantic
-- Native JSON support
-- OpenAPI documentation
-- Clear REST endpoint implementation
-- Lightweight application structure
-- Good test integration
-
----
-
-## Single Calculation Endpoint
-
-Instead of creating separate endpoints such as:
+Some useful scenarios for manually testing the complete application are:
 
 ```text
-/add
-/subtract
-/multiply
-/divide
+10 + 5 = 15
+
+10 - 3 = 7
+
+5 × 4 = 20
+
+10 ÷ 4 = 2.5
+
+2 xʸ 8 = 256
+
+25 √ = 5
+
+20 % 150 = 30
+
+-2 + 5 = 3
 ```
 
-the application exposes a single resource:
-
-```http
-POST /api/v1/calculations
-```
-
-The requested mathematical operation is provided in the request body.
-
-This keeps the API contract consistent and avoids duplicated routing logic.
-
-It also makes adding future calculator operations straightforward.
-
----
-
-## Business Logic Separated from HTTP
-
-Mathematical operations are implemented in:
+Error scenarios:
 
 ```text
-CalculatorService
+10 ÷ 0
+→ Division by zero is not allowed.
+
+√-4
+→ Square root of a negative number is not supported.
 ```
-
-and not directly inside the FastAPI route.
-
-The route is responsible for HTTP concerns, while the service is responsible for calculator behavior.
-
-This makes the business logic easier to test without requiring HTTP requests.
-
----
-
-## Domain-Specific Exceptions
-
-Errors such as division by zero are represented using domain-specific exceptions.
-
-Example:
-
-```text
-DivisionByZeroError
-```
-
-The backend exception handlers translate these exceptions into HTTP responses.
-
-This prevents the business layer from depending on FastAPI or HTTP status codes.
-
----
-
-## Consistent Error Responses
-
-All controlled API errors use the same structure:
-
-```json
-{
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Error description"
-  }
-}
-```
-
-This makes error handling predictable for the frontend.
-
----
-
-## Separate Frontend API Layer
-
-HTTP communication is implemented inside:
-
-```text
-src/services/calculatorApi.ts
-```
-
-instead of directly inside the React component.
-
-This separates:
-
-```text
-UI logic
-from
-HTTP communication
-```
-
-and allows both layers to be tested independently.
-
----
-
-## Validation on Both Layers
-
-The frontend provides immediate feedback and prevents invalid user interactions when possible.
-
-The backend still performs authoritative validation because API clients cannot be trusted to always originate from the provided frontend.
-
----
-
-## No Database
-
-The application does not require persistent data.
-
-Adding a database would introduce unnecessary infrastructure and complexity without solving a requirement of the assessment.
-
----
-
-## No External State Management
-
-The calculator has a small and localized state.
-
-React state is sufficient, so libraries such as Redux were intentionally not introduced.
-
-This keeps the solution easier to understand and maintain.
 
 ---
 
@@ -977,32 +1204,32 @@ The frontend currently uses:
 VITE_API_URL=http://localhost:8000
 ```
 
-A template is available in:
+An example is included in:
 
 ```text
 frontend/.env.example
 ```
 
-Environment-specific `.env` files are not committed to the repository.
+Local `.env` files are excluded from Git.
 
 ---
 
 # AI Assistance
 
-AI tools were used as a development assistant during the technical assessment.
+AI tooling was used during development as an assistant for:
 
-They were used primarily for:
+- Architecture review
+- API contract review
+- Implementation support
+- Edge-case identification
+- Testing strategy
+- Code review
+- Documentation review
+- Final requirement validation
 
-- Reviewing architecture decisions
-- Reviewing the API contract
-- Identifying test scenarios and edge cases
-- Supporting implementation
-- Reviewing error handling
-- Reviewing code structure
+Architecture decisions, technology selection, API behavior, implementation decisions, and final code ownership remained with the developer.
 
-The architecture, technology selection, API contract, implementation, tests, and final code were reviewed and validated during development.
-
-The prompts used during development are documented in:
+The relevant prompts used during development are documented in:
 
 ```text
 PROMPTS.md
@@ -1010,101 +1237,83 @@ PROMPTS.md
 
 ---
 
-# Assumptions
+# Possible Future Improvements
 
-The implementation was designed under the following assumptions:
+The application intentionally remains small and focused on the technical assessment requirements.
 
-1. The calculator operates using real numeric values.
-2. Basic arithmetic operations are the primary scope of the assessment.
-3. Calculations do not need to be persisted.
-4. Authentication and authorization are outside the scope of the challenge.
-5. The backend is the authoritative source for mathematical validation.
-6. The frontend and backend are expected to run locally on separate ports during development.
+Possible future extensions could include:
 
----
-
-# Future Improvements
-
-Possible extensions include:
-
-- Exponentiation
-- Square root
-- Percentage calculations
-- Keyboard input
+- Docker configuration
+- Docker Compose for frontend and backend
+- Continuous Integration with GitHub Actions
+- Automated lint/test/build checks on pull requests
+- Keyboard input support
+- Additional accessibility improvements
 - Calculation history
-- Dockerized frontend and backend
-- Continuous Integration workflow
-- Improved accessibility
-- Extended responsive behavior
-- Additional API contract tests
+- Scientific calculator operations
+- Backend and frontend deployment configuration
 
-These were intentionally left outside the initial implementation to prioritize the assessment requirements and maintain a focused solution.
+These features were intentionally left outside the core implementation to avoid unnecessary complexity.
 
 ---
 
-# Quick Verification
+# Final Validation
 
-After setup, the project can be verified with the following commands.
+Before submitting the project, the following commands can be used to verify the complete solution.
 
 ## Backend
 
-```powershell
+```bash
 cd backend
 python -m pytest
-python -m uvicorn app.main:app --reload
 ```
 
-Then verify:
+Start the API:
 
-```text
-http://localhost:8000/health
-http://localhost:8000/docs
+```bash
+python -m uvicorn app.main:app --reload
 ```
 
 ## Frontend
 
-In another terminal:
+From another terminal:
 
-```powershell
+```bash
 cd frontend
 npm run test:run
+npm run lint
 npm run build
 npm run dev
 ```
 
-Then open:
+The project is ready when:
 
 ```text
-http://localhost:5173
-```
-
-Test the following manually:
-
-```text
-10 + 5 = 15
-
-10 - 3 = 7
-
-5 × 4 = 20
-
-10 ÷ 4 = 2.5
-
-10 ÷ 0
-→ Division by zero is not allowed.
+Backend tests        PASS
+Frontend tests       PASS
+Frontend lint        PASS
+Frontend build       PASS
+API                  RUNNING
+Frontend             RUNNING
 ```
 
 ---
 
 # Summary
 
-This implementation focuses on the key priorities of the assessment:
+This project implements a full-stack calculator with a React/TypeScript frontend and a FastAPI/Python backend.
 
-```text
-Correctness
-Clarity
-Maintainability
-Testability
-Separation of responsibilities
-```
+The solution emphasizes:
 
-The result is a small full-stack application where the frontend, API layer, business logic, validation, and tests remain clearly separated while avoiding unnecessary architectural complexity.
+- Clear separation between UI, HTTP, and business logic
+- Backend-driven calculations
+- Input validation
+- Consistent error handling
+- Unit and integration testing
+- Frontend component and API-client testing
+- Advanced calculator operations
+- Responsive design
+- Reproducible setup instructions
+- Explicit documentation of AI assistance
+
+The architecture was intentionally kept simple because the application is stateless and does not require additional infrastructure such as a database, external state-management library, or distributed services.
